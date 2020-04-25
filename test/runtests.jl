@@ -40,9 +40,12 @@ end
         end
         rng = StableRNG(seed)
         n = length(stream)
-        @test rand(rng, T, n) == stream
+        a = rand(rng, T, n)
+        @test a == stream
         Random.seed!(rng, seed)
         @test rand(rng, T, n) == stream
+        Random.seed!(rng, seed)
+        @test rand!(rng, a) == stream
         Random.seed!(rng, seed)
         @test [rand(rng, T) for _=1:n] == stream
     end
