@@ -31,7 +31,7 @@ include("streams.jl")
 end
 
 @testset "$T streams" for T = [Bool, Base.BitInteger_types...,
-                               Float64]
+                               Float64, Float32, Float16]
     streams = T <: Integer ? STREAMS[UInt64] : STREAMS[T]
     for (seed, stream) in streams
         if T <: Integer
