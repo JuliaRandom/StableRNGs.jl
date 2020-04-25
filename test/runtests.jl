@@ -1,6 +1,8 @@
 using StableRNGs, Test
 using Random
 
+include("streams.jl")
+
 @testset "initialization" begin
     @test StableRNG === LehmerRNG
     @test_throws MethodError LehmerRNG()
@@ -25,5 +27,18 @@ using Random
                 @test rng.state == state
             end
         end
+    end
+end
+
+@testset "$T streams" for T = (UInt64,)
+    streams = STREAMS[T]
+    for (seed, stream) in streams
+        rng = StableRNG(seed)
+        n = length(stream)
+        @test rand(rng, T, n) == stream
+        Random.seed!(rng, seed)
+        @test rand(rng, T, n) == stream
+        Random.seed!(rng, seed)
+        @test [rand(rng, T) for _=1:n] == stream
     end
 end

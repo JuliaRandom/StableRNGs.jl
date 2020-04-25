@@ -2,9 +2,9 @@ module StableRNGs
 
 export LehmerRNG, StableRNG
 
-using Random: AbstractRNG
+using Random: AbstractRNG, SamplerType
 
-import Random: seed!
+import Random: rand, seed!
 
 
 # implementation of LehmerRNG based on the constants found at the
@@ -24,6 +24,11 @@ function seed!(rng::LehmerRNG, seed::Union{Int64,Int32})
     seed = ((seed % UInt128) << 1) | one(UInt128) # must be odd
     rng.state = seed
     rng
+end
+
+function rand(rng::LehmerRNG, ::SamplerType{UInt64})
+    rng.state *= 0x45a31efc5a35d971261fd0407a968add
+    (rng.state >> 64) % UInt64
 end
 
 
