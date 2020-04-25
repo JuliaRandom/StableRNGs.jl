@@ -36,5 +36,10 @@ for T = [Bool, Base.BitInteger64_types...]
     @eval rand(rng::LehmerRNG, ::SamplerType{$T}) = rand(rng, UInt64) % $T
 end
 
+rand(rng::LehmerRNG, ::SamplerType{UInt128}) =
+     rand(rng, UInt64) | ((rand(rng, UInt64) % UInt128) << 64)
+
+rand(rng::LehmerRNG, ::SamplerType{Int128}) = rand(rng, UInt128) % Int128
+
 
 end # module
