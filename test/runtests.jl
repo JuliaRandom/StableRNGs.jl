@@ -30,9 +30,10 @@ include("streams.jl")
     end
 end
 
-@testset "$T streams" for T = (UInt64,)
-    streams = STREAMS[T]
+@testset "$T streams" for T = [Bool, Base.BitInteger64_types...]
+    streams = STREAMS[UInt64]
     for (seed, stream) in streams
+        stream = stream .% T
         rng = StableRNG(seed)
         n = length(stream)
         @test rand(rng, T, n) == stream

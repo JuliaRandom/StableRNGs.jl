@@ -31,5 +31,10 @@ function rand(rng::LehmerRNG, ::SamplerType{UInt64})
     (rng.state >> 64) % UInt64
 end
 
+for T = [Bool, Base.BitInteger64_types...]
+    T === UInt64 && continue
+    @eval rand(rng::LehmerRNG, ::SamplerType{$T}) = rand(rng, UInt64) % $T
+end
+
 
 end # module
