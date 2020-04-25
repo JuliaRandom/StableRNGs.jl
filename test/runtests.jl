@@ -30,13 +30,16 @@ include("streams.jl")
     end
 end
 
-@testset "$T streams" for T = [Bool, Base.BitInteger_types...]
-    streams = STREAMS[UInt64]
+@testset "$T streams" for T = [Bool, Base.BitInteger_types...,
+                               Float64]
+    streams = T <: Integer ? STREAMS[UInt64] : STREAMS[T]
     for (seed, stream) in streams
-        if sizeof(T) == 16
-            stream = reinterpret(T, stream)
-        else
-            stream = stream .% T
+        if T <: Integer
+            if sizeof(T) == 16
+                stream = reinterpret(T, stream)
+            else
+                stream = stream .% T
+            end
         end
         rng = StableRNG(seed)
         n = length(stream)

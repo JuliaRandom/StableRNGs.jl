@@ -2,7 +2,7 @@ module StableRNGs
 
 export LehmerRNG, StableRNG
 
-using Random: AbstractRNG, SamplerType
+using Random: Random, AbstractRNG, SamplerType
 
 import Random: rand, seed!
 
@@ -40,6 +40,8 @@ rand(rng::LehmerRNG, ::SamplerType{UInt128}) =
      rand(rng, UInt64) | ((rand(rng, UInt64) % UInt128) << 64)
 
 rand(rng::LehmerRNG, ::SamplerType{Int128}) = rand(rng, UInt128) % Int128
+
+Random.rng_native_52(::LehmerRNG) = UInt64
 
 
 end # module
