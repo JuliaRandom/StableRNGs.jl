@@ -1,5 +1,7 @@
 # StableRNGs
 
+[![Build Status](https://travis-ci.org/rfourquet/StableRNGs.jl.svg?branch=master)](https://travis-ci.org/rfourquet/StableRNGs.jl)
+
 This package intends to provide a simple RNG with _stable_ streams, suitable
 for tests in packages which need reproducible streams of random numbers
 across Julia versions. Indeed, the RNGs provided by default are documented
