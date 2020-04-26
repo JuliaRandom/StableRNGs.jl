@@ -30,20 +30,34 @@ include("streams.jl")
     end
 end
 
-gettype(::Type{T}) where {T} = T
-gettype(::Type{Normal{T}}) where {T} = T
-gettype(::Type{Exponential{T}}) where {T} = T
+getsampler(::Type{T}) where {T} = T
+getsampler(::Type{Normal{T}}) where {T} = T
+getsampler(::Type{Exponential{T}}) where {T} = T
+getsampler(x::UnitRange) = x
 
-@testset "$T streams" for T = [Bool, Base.BitInteger_types...,
-                               Float64, Normal{Float64}, Exponential{Float64},
-                               Float32, Normal{Float32}, Exponential{Float32},
-                               Float16, Normal{Float16}, Exponential{Float16}]
-    streams = T <: Integer ? STREAMS[UInt64] : STREAMS[T]
-    _rand = T <: Normal ? randn : T <: Exponential ? randexp : rand
-    _rand! = T <: Normal ? randn! : T <: Exponential ? randexp! : rand!
-    TT = gettype(T)
+@testset "$T streams" for T =
+    [Bool, Base.BitInteger_types...,
+     [map(t, 1:123) for t in Base.BitInteger_types]...,
+     1:Int128(2)^100, 1:UInt128(2)^100, false:true,
+     Float64, Normal{Float64}, Exponential{Float64},
+     Float32, Normal{Float32}, Exponential{Float32},
+     Float16, Normal{Float16}, Exponential{Float16}]
+
+    streams = T isa DataType && T <: Integer ? STREAMS[UInt64] :
+        T isa UnitRange ? STREAMS[last(T)] : STREAMS[T]
+
+    _rand, _rand! =
+        if T isa DataType && T <: Normal
+            randn, randn!
+        elseif T isa DataType && T <: Exponential
+            randexp, randexp!
+        else
+           rand, rand!
+        end
+    TT = getsampler(T)
+
     for (seed, stream) in streams
-        if T <: Integer
+        if T isa DataType && T <: Integer
             if sizeof(T) == 16
                 stream = reinterpret(T, stream)
             else
@@ -57,7 +71,11 @@ gettype(::Type{Exponential{T}}) where {T} = T
         Random.seed!(rng, seed)
         @test _rand(rng, TT, n) == stream
         Random.seed!(rng, seed)
-        @test _rand!(rng, a) == stream
+        if TT isa DataType
+            @test _rand!(rng, a) == stream
+        else
+            @test _rand!(rng, a, TT) == stream
+        end
         Random.seed!(rng, seed)
         @test [_rand(rng, TT) for _=1:n] == stream
     end

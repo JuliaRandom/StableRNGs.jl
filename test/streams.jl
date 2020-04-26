@@ -1,7 +1,9 @@
 struct Normal{T} end
 struct Exponential{T} end
 
-const STREAMS = Dict{DataType,Dict{Int,Vector}}(
+# sampler => Dict(seed => rand(LehmerRNG(seed), n))
+# if key (sampler) isa Integer, it represents 1:key
+const STREAMS = Dict{Any,Dict{Int,Vector}}(
     UInt64 => Dict(
         0 => [0x45a31efc5a35d971, 0xc6106997913e7a3b, 0x949e7d1a64224226,
               0x233c600f92647349, 0x275e265b37c53f51, 0x7eb1431760d5e0d9,
@@ -11,15 +13,69 @@ const STREAMS = Dict{DataType,Dict{Int,Vector}}(
               0x69b5202eb72d59db, 0x761a7311a74fbdf5, 0x7c13c9462281a28d,
               0x60fb5add7f0438e8, 0x8c18ecb2513738a0, 0x9dd0d00932a42118,
               0x6283c9dbcccaa072, 0xfa8f1990220cdb11, 0x15072177ca8d0630],
-        2^32 => [0xfa0ed1dea67579f2, 0xe88d5e0e5b8b40fe, 0x5ce30167dd0c0c22,
-                 0x480546a1a865a818, 0x96e8a4ff013c8a92, 0x405d04cb572b978f,
-                 0x1fabeee4affbf0c3, 0xba2d1f50e67a63d0, 0x565db0bdf8d96d6b,
-                 0x540858ead6088e6d, 0x14e2efe6ac5775fa, 0x8e0b0f48316d364b],
+        Int(2)^32 =>
+        [0xfa0ed1dea67579f2, 0xe88d5e0e5b8b40fe, 0x5ce30167dd0c0c22,
+         0x480546a1a865a818, 0x96e8a4ff013c8a92, 0x405d04cb572b978f,
+         0x1fabeee4affbf0c3, 0xba2d1f50e67a63d0, 0x565db0bdf8d96d6b,
+         0x540858ead6088e6d, 0x14e2efe6ac5775fa, 0x8e0b0f48316d364b],
         typemax(Int64) =>
         [0xe07cb1442060b16b, 0x9f15f9ca1910888d, 0x27d667e3a5597f5e,
          0xe7c43a5819b14e87, 0xbd5d7f453bf3bc1b, 0x7c7998438141ee3f,
          0xf7d425f171d5da47, 0xe1abaee77149b9c0, 0x3f6116840ff765f4,
          0xfd613e850d5b6198, 0x524f389f5079bcf4, 0x6ff20ef5be83190b]),
+    123 => Dict(
+        0 => [0x72, 0x3c, 0x27, 0x4a, 0x52, 0x5a, 0x4e, 0x61,
+              0x09, 0x51, 0x31, 0x66, 0x6d, 0x68, 0x65, 0x1b,
+              0x5e, 0x07, 0x28, 0x3a, 0x33, 0x70, 0x6e, 0x35],
+        1 => [0x54, 0x33, 0x75, 0x5c, 0x76, 0x0e, 0x69, 0x21,
+              0x19, 0x73, 0x12, 0x31, 0x46, 0x38, 0x2d, 0x51,
+              0x18, 0x15, 0x76, 0x2d, 0x17, 0x50, 0x4a, 0x1d],
+        Int64(2)^32 => [0x73, 0x23, 0x19, 0x13, 0x10, 0x44, 0x51, 0x6c,
+                        0x6e, 0x7b, 0x4c, 0x12, 0x19, 0x3e, 0x16, 0x6e,
+                        0x06, 0x26, 0x05, 0x7a, 0x13, 0x6d, 0x6e, 0x18],
+        typemax(Int) => [0x6c, 0x0e, 0x5f, 0x08, 0x1c, 0x40, 0x48, 0x41,
+                         0x75, 0x19, 0x75, 0x0c, 0x21, 0x52, 0x51, 0x43,
+                         0x03, 0x2c, 0x3f, 0x6a, 0x74, 0x27, 0x66, 0x74],
+    ),
+    # can't have 1:UInt128(2)^100 as a key, it's too big, cf. #35603
+    UInt128(2)^100 => Dict(
+        0 => [0x007913e7a3b45a31efc5a35d972, 0x00f92647349949e7d1a64224227,
+              0x00760d5e0d9275e265b37c53f52, 0x000c5bd12e075a91e49d501684e,
+              0x00944438ad0df459aadbb8c0b09, 0x00d438457655385088560aef3b1,
+              0x002292725e7bf0412ad4e6167ed, 0x0065e6e00fe22801cd76310dc65,
+              0x00329916fdd3b9df5bfe8ce461b, 0x00951b9612719a9585e619de307,
+              0x009f94fa7326c9f3ed5bdcadeba, 0x0046c73306dba795fe8c75a9770],
+        1 => [0x006b3bb6eb2d0e95cf50ea18c54, 0x00eb72d59dbbddb774f2c66c675,
+              0x0062281a28d761a7311a74fbdf6, 0x002513738a060fb5add7f0438e9,
+              0x00bcccaa0729dd0d00932a42119, 0x007ca8d0630fa8f1990220cdb12,
+              0x0067b7571b73d0c3807eb2437c6, 0x0031b4a02fc678056862932952d,
+              0x0097cb44f97b2d9e13fba6ad251, 0x00bf52c23754cfc091b24d9a915,
+              0x00debeef59645ddbc8139609c2d, 0x00d455991492f6c1fba560fc650],
+        Int64(2)^32 =>
+        [0x00e5b8b40fefa0ed1dea67579f3, 0x001a865a8185ce30167dd0c0c23,
+         0x00b572b978f96e8a4ff013c8a93, 0x000e67a63d01fabeee4affbf0c4,
+         0x00ad6088e6d565db0bdf8d96d6c, 0x008316d364b14e2efe6ac5775fb,
+         0x002248fb2185bc6e28653152312, 0x00448742715e8a1d59fe134f43e,
+         0x00d6a7b16ed0d3a81f5bdfa84fd, 0x0078499dfa5dce51e6be76c4206,
+         0x00e6f5d2d79e834fc489240f705, 0x00fffad736c492e8ec852c85213],
+        typemax(Int) =>
+        [0x00a1910888de07cb1442060b16c, 0x00819b14e8727d667e3a5597f5f,
+         0x0038141ee3fbd5d7f453bf3bc1c, 0x0077149b9c0f7d425f171d5da48,
+         0x0050d5b61983f6116840ff765f5, 0x005be83190b524f389f5079bcf5,
+         0x0063a7004d1c355cae530dd93a1, 0x0050aaefc421c91ef1545dcbf51,
+         0x004e93aea2baef829b0d3d36503, 0x005cc3461e9a93dd7210c9ab0bf,
+         0x009de23a326fd9bcd4fa993b0f4, 0x00aaf1de1730b3d7d6857669166],
+    ),
+    true => Dict(
+        0 => [1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1,
+              0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1],
+        1 => [1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0,
+              1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1],
+        Int64(2)^32 => [0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1,
+                        1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0],
+        typemax(Int) => [1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1,
+                         0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1],
+    ),
     Float64 => Dict(
         0 =>
         [0.1950648807374728566, 0.0257793115230373626, 0.9055427466847816298,
