@@ -32,14 +32,15 @@ end
 
 gettype(::Type{T}) where {T} = T
 gettype(::Type{Normal{T}}) where {T} = T
+gettype(::Type{Exponential{T}}) where {T} = T
 
 @testset "$T streams" for T = [Bool, Base.BitInteger_types...,
-                               Float64, Float32, Float16,
-                               Normal{Float64}, Normal{Float32},
-                               Normal{Float16}]
+                               Float64, Normal{Float64}, Exponential{Float64},
+                               Float32, Normal{Float32}, Exponential{Float32},
+                               Float16, Normal{Float16}, Exponential{Float16}]
     streams = T <: Integer ? STREAMS[UInt64] : STREAMS[T]
-    _rand = T <: Normal ? randn : rand
-    _rand! = T <: Normal ? randn! : rand!
+    _rand = T <: Normal ? randn : T <: Exponential ? randexp : rand
+    _rand! = T <: Normal ? randn! : T <: Exponential ? randexp! : rand!
     TT = gettype(T)
     for (seed, stream) in streams
         if T <: Integer
