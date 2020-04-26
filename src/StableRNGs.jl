@@ -2,7 +2,7 @@ module StableRNGs
 
 export LehmerRNG, StableRNG
 
-using Random: Random, AbstractRNG, SamplerType
+using Random: Random, AbstractRNG, Sampler, SamplerType
 
 import Random: rand, seed!
 
@@ -42,6 +42,55 @@ rand(rng::LehmerRNG, ::SamplerType{UInt128}) =
 rand(rng::LehmerRNG, ::SamplerType{Int128}) = rand(rng, UInt128) % Int128
 
 Random.rng_native_52(::LehmerRNG) = UInt64
+
+
+## within a range
+
+# adapted verion of Random.SamplerRangeFast for native 64 bits generation
+# we don't use "near division-less algorithm", as it doesn't work for Int128,
+# and we want to maintain as little code as possible here
+
+using Base: BitUnsigned, BitInteger
+using Random: LessThan, Masked, uniform
+
+struct SamplerRangeFast{U<:BitUnsigned,T<:BitInteger} <: Sampler{T}
+    a::T      # first element of the range
+    bw::UInt  # bit width
+    m::U      # range length - 1
+    mask::U   # mask generated values before threshold rejection
+end
+
+SamplerRangeFast(r::AbstractUnitRange{T}) where T<:BitInteger =
+    SamplerRangeFast(r, T <: Base.BitInteger64 ? UInt64 : UInt128)
+
+function SamplerRangeFast(r::AbstractUnitRange{T}, ::Type{U}) where {T,U}
+    isempty(r) && throw(ArgumentError("range must be non-empty"))
+    m = (last(r) - first(r)) % unsigned(T) % U
+    #                        ^--- % unsigned(T) to not propagate sign bit
+    bw = (sizeof(U) << 3 - leading_zeros(m)) % UInt # bit-width
+    mask = ((1 % U) << bw) - (1 % U)
+    SamplerRangeFast{U,T}(first(r), bw, m, mask)
+end
+
+function rand(rng::LehmerRNG, sp::SamplerRangeFast{UInt64,T}) where T
+    a, bw, m, mask = sp.a, sp.bw, sp.m, sp.mask
+    x = rand(rng, LessThan(m, Masked(mask, uniform(UInt64))))
+    (x + a % UInt64) % T
+end
+
+function rand(rng::LehmerRNG, sp::SamplerRangeFast{UInt128,T}) where T
+    a, bw, m, mask = sp.a, sp.bw, sp.m, sp.mask
+    x = bw <= 64  ?
+        rand(rng,
+             LessThan(m % UInt64,
+                      Masked(mask % UInt64, uniform(UInt64)))) % UInt128 :
+        rand(rng, LessThan(m, Masked(mask, uniform(UInt128))))
+    x % T + a
+end
+
+Sampler(::Type{LehmerRNG}, r::AbstractUnitRange{T}, ::Random.Repetition
+        ) where {T<:BitInteger} =
+            SamplerRangeFast(r)
 
 
 end # module

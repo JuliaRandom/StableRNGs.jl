@@ -62,3 +62,27 @@ gettype(::Type{Exponential{T}}) where {T} = T
         @test [_rand(rng, TT) for _=1:n] == stream
     end
 end
+
+@testset "rand in range" begin
+    rng = LehmerRNG(0)
+    @test_throws ArgumentError rand(rng, 1:0)
+    for T in Base.BitInteger_types
+        sp = Random.Sampler(LehmerRNG, T(1):T(1))
+        @test sp isa StableRNGs.SamplerRangeFast
+    end
+    for n in Int128[rand(1:128, 100); rand(1:Int64(2)^32, 100); Int64(2)^32;
+                    rand(1:typemax(Int64), 100); rand(1:Int128(2)^64, 100);
+                    Int128(2)^64; rand(1:typemax(Int128), 100)]
+        for T in Base.BitInteger_types
+            n < typemax(T) || continue
+            n = T(n)
+            @test all(∈(1:n), rand(rng, T(1):n, 100))
+            if n >= 4
+                @test all(∈(4:n), rand(rng, T(4):n, 100))
+            end
+            if T <: Signed
+                @test all(∈(-100:n), rand(rng, T(-100):n, 100))
+            end
+        end
+    end
+end
