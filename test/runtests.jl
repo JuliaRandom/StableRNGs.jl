@@ -30,9 +30,17 @@ include("streams.jl")
     end
 end
 
+gettype(::Type{T}) where {T} = T
+gettype(::Type{Normal{T}}) where {T} = T
+
 @testset "$T streams" for T = [Bool, Base.BitInteger_types...,
-                               Float64, Float32, Float16]
+                               Float64, Float32, Float16,
+                               Normal{Float64}, Normal{Float32},
+                               Normal{Float16}]
     streams = T <: Integer ? STREAMS[UInt64] : STREAMS[T]
+    _rand = T <: Normal ? randn : rand
+    _rand! = T <: Normal ? randn! : rand!
+    TT = gettype(T)
     for (seed, stream) in streams
         if T <: Integer
             if sizeof(T) == 16
@@ -43,13 +51,13 @@ end
         end
         rng = StableRNG(seed)
         n = length(stream)
-        a = rand(rng, T, n)
+        a = _rand(rng, TT, n)
         @test a == stream
         Random.seed!(rng, seed)
-        @test rand(rng, T, n) == stream
+        @test _rand(rng, TT, n) == stream
         Random.seed!(rng, seed)
-        @test rand!(rng, a) == stream
+        @test _rand!(rng, a) == stream
         Random.seed!(rng, seed)
-        @test [rand(rng, T) for _=1:n] == stream
+        @test [_rand(rng, TT) for _=1:n] == stream
     end
 end
