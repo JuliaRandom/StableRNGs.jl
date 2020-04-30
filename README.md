@@ -14,7 +14,7 @@ a new major version will be released with the fix.
 
 `StableRNG` is an alias for `LehmerRNG`, and implements a well understood
 linear congruential generator (LCG); an LCG is not state of the art,
-but is fast and is believed to have reasonably good statistical properties,
+but is fast and is believed to have reasonably good statistical properties [1],
 suitable at least for tests of a wide range of packages.
 The choice of this particular RNG is based on its simplicity, which limits
 the chances for bugs.
@@ -27,14 +27,27 @@ The currently stable (guaranteed) API is
 * `rand(rng, X)` where `X` is any of the standard bit `Integer` types
   (`Bool`, `Int8`, `Int16`, `Int32`, `Int64`, `Int128`,
   `UInt8`, `UInt16`, `UInt32`, `UInt64`, `UInt128`)
-  or a `UnitRange` of these types
+  or a `UnitRange` of these types;
 * `rand(rng, X)`, `randn(rng, X)`, `randexp(rng, X)` where `X` is a standard
-  bit `AbstractFloat` types (`Float16`, `Float32`, `Float64`)
+  bit `AbstractFloat` types (`Float16`, `Float32`, `Float64`);
+* array versions for these types, including
+  the mutating methods `rand!`, `randn!` and `randexp!`.
+
+Note that the generated streams of numbers for scalar and arrays are the same,
+i.e. `rand(rng, X, n)` is equal to `[rand(rng, X) for _=1:n]` for a given `rng`
+state.
 
 Please open an issue for missing needed APIs.
 
 Also, as this package is currently not tested on 32-bits architectures,
 no stability is guaranteed on them.
+
+[1] `LehmerRNG` is implemented after the specific constants published by
+Melissa E. O'Neill in this
+[C++ implementation](https://gist.github.com/imneme/aeae7628565f15fb3fef54be8533e39c),
+and passes the Big Crush test (thanks to Kristoffer Carlsson for running it).
+See also for example this
+[blog post](https://lemire.me/blog/2019/03/19/the-fastest-conventional-random-number-generator-that-can-pass-big-crush/).
 
 ## Usage
 
