@@ -88,9 +88,11 @@ function rand(rng::LehmerRNG, sp::SamplerRangeFast{UInt128,T}) where T
     x % T + a
 end
 
-Sampler(::Type{LehmerRNG}, r::AbstractUnitRange{T}, ::Random.Repetition
-        ) where {T<:BitInteger} =
-            SamplerRangeFast(r)
+for T in Base.BitInteger_types
+    # eval because of ambiguities with `where T <: BitInteger`
+    @eval Sampler(::Type{LehmerRNG}, r::AbstractUnitRange{$T}, ::Random.Repetition) =
+        SamplerRangeFast(r)
+end
 
 
 end # module
