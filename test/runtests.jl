@@ -10,11 +10,12 @@ include("streams.jl")
     @test_throws MethodError Random.seed!(rng)
     @test_throws ArgumentError LehmerRNG(rand(typemin(Int):-1))
     @test_throws ArgumentError Random.seed!(rng, rand(typemin(Int):-1))
+    @test_throws ArgumentError Random.seed!(rng, big(typemax(Int64))+1)
 
     for seed in Int64[0, 1, 2, 3, 4, typemax(Int32),
                       Int64(2)^32, typemax(Int64)]
-        for T = (Int32, Int64)
-            seed > typemax(T) && continue
+        for T = (Int8, UInt8, Int32, Int64, UInt, BigInt)
+            Base.hastypemax(T) && seed > typemax(T) && continue
             seed = T(seed)
             rng = LehmerRNG(seed)
             @test rng isa LehmerRNG
