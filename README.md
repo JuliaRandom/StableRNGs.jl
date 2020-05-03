@@ -4,13 +4,16 @@
 
 This package intends to provide a simple RNG with _stable_ streams, suitable
 for tests in packages which need reproducible streams of random numbers
-across Julia versions. Indeed, the RNGs provided by default are documented
+across Julia versions. Indeed, the Julia RNGs provided by default are
+[documented](https://docs.julialang.org/en/v1.4/stdlib/Random/#Reproducibility-1)
 to have non-stable streams (which for example enables some performance
 improvements).
 
 The `StableRNG` type provided by this package strives
 for stability, but if bugs which require breaking this promise are found,
 a new major version will be released with the fix.
+Note that this package did _not_ reach version 1.0, which means it is
+not stable _yet_, although no changes are expected.
 
 `StableRNG` is an alias for `LehmerRNG`, and implements a well understood
 linear congruential generator (LCG); an LCG is not state of the art,
@@ -24,6 +27,9 @@ or via `Random.seed!`), i.e. no random seed will be chosen for the user
 as is the case in e.g. `MersenneTwister()`.
 
 The currently stable (guaranteed) API is
+* construction: `rng = StableRNG(seed::Int)` (in particular the alias
+  `LehmerRNG` is currently _not_ part of the API),
+* seeding: `Random.seed!(rng::StableRNG, seed::Int)`,
 * `rand(rng, X)` where `X` is any of the standard bit `Integer` types
   (`Bool`, `Int8`, `Int16`, `Int32`, `Int64`, `Int128`,
   `UInt8`, `UInt16`, `UInt32`, `UInt64`, `UInt128`)
