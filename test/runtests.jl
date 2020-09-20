@@ -5,7 +5,7 @@ include("streams.jl")
 
 @testset "initialization" begin
     @test StableRNG === LehmerRNG
-    @test_throws MethodError LehmerRNG()
+    @test_throws UndefKeywordError LehmerRNG()
     rng = LehmerRNG(0)
     @test_throws MethodError Random.seed!(rng)
     @test_throws ArgumentError LehmerRNG(rand(typemin(Int):-1))
@@ -29,6 +29,14 @@ include("streams.jl")
             end
         end
     end
+
+    # state
+    rng = LehmerRNG(0)
+    @test rng.state == 1
+    @test string(rng) == "LehmerRNG(state=0x00000000000000000000000000000001)"
+    @test LehmerRNG(state=0x00000000000000000000000000000001).state == 1
+    # @test LehmerRNG(state=0x00000000000000000000000000000001) == rng
+    @test_throws ArgumentError LehmerRNG(state=2*UInt128(rand(1:9999)))
 end
 
 getsampler(::Type{T}) where {T} = T

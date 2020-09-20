@@ -15,6 +15,11 @@ mutable struct LehmerRNG <: AbstractRNG
     state::UInt128
 
     LehmerRNG(seed::Integer) = seed!(new(), seed)
+
+    function LehmerRNG(; state::UInt128)
+        isodd(state) || throw(ArgumentError("state must be odd"))
+        new(state)
+    end
 end
 
 const StableRNG = LehmerRNG
@@ -29,6 +34,12 @@ function seed!(rng::LehmerRNG, seed::Integer)
     rng.state = seed
     rng
 end
+
+Base.show(io::IO, rng::LehmerRNG) =
+    print(io, "LehmerRNG(state=0x$(string(rng.state, base=16, pad=32)))")
+
+
+## Sampling
 
 function rand(rng::LehmerRNG, ::SamplerType{UInt64})
     rng.state *= 0x45a31efc5a35d971261fd0407a968add
