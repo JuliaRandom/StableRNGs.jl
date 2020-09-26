@@ -15,12 +15,15 @@ a new major version will be released with the fix.
 Note that this package did _not_ reach version 1.0, which means it is
 not stable _yet_, although no changes are expected.
 
-`StableRNG` is an alias for `LehmerRNG`, and implements a well understood
+`StableRNG` is currently an alias for `LehmerRNG`, and implements a well understood
 linear congruential generator (LCG); an LCG is not state of the art,
 but is fast and is believed to have reasonably good statistical properties [1],
 suitable at least for tests of a wide range of packages.
 The choice of this particular RNG is based on its simplicity, which limits
 the chances for bugs.
+Note that only `StableRNG` is exported from the package, and should be the only
+type used in client code; `LehmerRNG` might be renamed, or might be made a distinct
+type from `StableRNG` in any upcoming _minor_ (i.e. non-breaking) release.
 
 Currently, this RNG requires explicit seeding (in the constructor
 or via `Random.seed!`), i.e. no random seed will be chosen for the user

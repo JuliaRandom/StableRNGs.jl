@@ -1,4 +1,6 @@
-using StableRNGs, Test
+using StableRNGs
+using StableRNGs: LehmerRNG
+using Test
 using Random
 
 include("streams.jl")

@@ -1,6 +1,6 @@
 module StableRNGs
 
-export LehmerRNG, StableRNG
+export StableRNG
 
 using Random: Random, AbstractRNG, Sampler, SamplerType
 
@@ -36,7 +36,7 @@ function seed!(rng::LehmerRNG, seed::Integer)
 end
 
 Base.show(io::IO, rng::LehmerRNG) =
-    print(io, "LehmerRNG(state=0x$(string(rng.state, base=16, pad=32)))")
+    print(io, LehmerRNG, "(state=0x", string(rng.state, base=16, pad=32), ")")
 
 
 ## Sampling
