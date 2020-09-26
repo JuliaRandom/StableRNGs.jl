@@ -37,16 +37,14 @@ The currently stable (guaranteed) API is
   bit `AbstractFloat` types (`Float16`, `Float32`, `Float64`)
 * array versions for these types, including
   the mutating methods `rand!`, `randn!` and `randexp!`
-* `rand(rng, ::AbstractArray)` (e.g. `rand(rng, 1:9)`)
+* `rand(rng, ::AbstractArray)` (e.g. `rand(rng, 1:9)`); the streams are the same
+  on 32-bits and 64-bits architectures
 
 Note that the generated streams of numbers for scalars and arrays are the same,
 i.e. `rand(rng, X, n)` is equal to `[rand(rng, X) for _=1:n]` for a given `rng`
 state.
 
 Please open an issue for missing needed APIs.
-
-Also, as this package is currently not tested on 32-bits architectures,
-no stability is guaranteed on them.
 
 [1] `LehmerRNG` is implemented after the specific constants published by
 Melissa E. O'Neill in this
