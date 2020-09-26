@@ -28,18 +28,18 @@ as is the case in e.g. `MersenneTwister()`.
 
 The currently stable (guaranteed) API is
 * construction: `rng = StableRNG(seed::Int)` (in particular the alias
-  `LehmerRNG` is currently _not_ part of the API),
-* seeding: `Random.seed!(rng::StableRNG, seed::Int)`,
+  `LehmerRNG` is currently _not_ part of the API)
+* seeding: `Random.seed!(rng::StableRNG, seed::Int)` (with `seed >= 0`)
 * `rand(rng, X)` where `X` is any of the standard bit `Integer` types
   (`Bool`, `Int8`, `Int16`, `Int32`, `Int64`, `Int128`,
   `UInt8`, `UInt16`, `UInt32`, `UInt64`, `UInt128`)
-  or a `UnitRange` of these types;
 * `rand(rng, X)`, `randn(rng, X)`, `randexp(rng, X)` where `X` is a standard
-  bit `AbstractFloat` types (`Float16`, `Float32`, `Float64`);
+  bit `AbstractFloat` types (`Float16`, `Float32`, `Float64`)
 * array versions for these types, including
-  the mutating methods `rand!`, `randn!` and `randexp!`.
+  the mutating methods `rand!`, `randn!` and `randexp!`
+* `rand(rng, ::AbstractArray)` (e.g. `rand(rng, 1:9)`)
 
-Note that the generated streams of numbers for scalar and arrays are the same,
+Note that the generated streams of numbers for scalars and arrays are the same,
 i.e. `rand(rng, X, n)` is equal to `[rand(rng, X) for _=1:n]` for a given `rng`
 state.
 
