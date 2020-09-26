@@ -47,6 +47,8 @@ Base.copy(src::LehmerRNG) = LehmerRNG(state=src.state)
 
 Base.:(==)(x::LehmerRNG, y::LehmerRNG) = x.state == y.state
 
+Base.hash(rng::LehmerRNG, h::UInt) = hash(rng.state, 0x93f376feff2bc48e % UInt ⊻ h)
+
 
 ## Sampling
 

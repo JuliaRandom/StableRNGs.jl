@@ -40,15 +40,18 @@ include("streams.jl")
     # @test LehmerRNG(state=0x00000000000000000000000000000001) == rng
     @test_throws ArgumentError LehmerRNG(state=2*UInt128(rand(1:9999)))
 
-    # copy / ==
+    # copy / == / hash
     seed = rand(UInt32)
     Random.seed!(rng, seed)
     c = copy(rng)
     @test c.state == rng.state
     @test c !== rng
     @test c == rng
+    @test hash(c) == hash(rng)
+    @test hash(c, UInt(123)) == hash(rng, UInt(123))
     rand(rng)
     @test c != rng
+    @test hash(c) != hash(rng) # should almost always be true
     c = copy(rng)
     @test c.state == rng.state
     @test c !== rng
