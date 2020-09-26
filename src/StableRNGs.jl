@@ -38,6 +38,13 @@ end
 Base.show(io::IO, rng::LehmerRNG) =
     print(io, LehmerRNG, "(state=0x", string(rng.state, base=16, pad=32), ")")
 
+function Base.copy!(dst::LehmerRNG, src::LehmerRNG)
+    dst.state = src.state
+    dst
+end
+
+Base.copy(src::LehmerRNG) = LehmerRNG(state=src.state)
+
 
 ## Sampling
 
