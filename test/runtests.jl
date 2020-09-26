@@ -40,14 +40,19 @@ include("streams.jl")
     # @test LehmerRNG(state=0x00000000000000000000000000000001) == rng
     @test_throws ArgumentError LehmerRNG(state=2*UInt128(rand(1:9999)))
 
-    # copy
+    # copy / ==
     seed = rand(UInt32)
     Random.seed!(rng, seed)
-    @test copy(rng).state == rng.state
-    @test copy(rng) !== rng
+    c = copy(rng)
+    @test c.state == rng.state
+    @test c !== rng
+    @test c == rng
     rand(rng)
-    @test copy(rng).state == rng.state
-    @test copy(rng) !== rng
+    @test c != rng
+    c = copy(rng)
+    @test c.state == rng.state
+    @test c !== rng
+    @test c == rng
 end
 
 getsampler(::Type{T}) where {T} = T

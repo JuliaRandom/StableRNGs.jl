@@ -45,6 +45,8 @@ end
 
 Base.copy(src::LehmerRNG) = LehmerRNG(state=src.state)
 
+Base.:(==)(x::LehmerRNG, y::LehmerRNG) = x.state == y.state
+
 
 ## Sampling
 
