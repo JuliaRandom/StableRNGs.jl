@@ -12,11 +12,11 @@ include("streams.jl")
     @test_throws MethodError Random.seed!(rng)
     @test_throws ArgumentError LehmerRNG(rand(typemin(Int):-1))
     @test_throws ArgumentError Random.seed!(rng, rand(typemin(Int):-1))
-    @test_throws ArgumentError Random.seed!(rng, big(typemax(Int64))+1)
+    @test_throws ArgumentError Random.seed!(rng, big(typemax(UInt64))+1)
 
-    for seed in Int64[0, 1, 2, 3, 4, typemax(Int32),
-                      Int64(2)^32, typemax(Int64)]
-        for T = (Int8, UInt8, Int32, Int64, UInt, BigInt)
+    for seed in UInt64[0, 1, 2, 3, 4, typemax(Int32),
+                      Int64(2)^32, typemax(Int64), typemax(UInt64)]
+        for T = (Int8, UInt8, Int32, Int64, UInt, Int128, BigInt)
             Base.hastypemax(T) && seed > typemax(T) && continue
             seed = T(seed)
             rng = LehmerRNG(seed)
@@ -26,9 +26,7 @@ include("streams.jl")
             rng2 = Random.seed!(rng, seed)
             @test rng2 === rng
             @test isodd(rng.state)
-            if !isempty(seed)
-                @test rng.state == state
-            end
+            @test rng.state == state
         end
     end
 
@@ -41,7 +39,7 @@ include("streams.jl")
     @test_throws ArgumentError LehmerRNG(state=2*UInt128(rand(1:9999)))
 
     # copy / == / hash
-    seed = rand(UInt32)
+    seed = rand(UInt)
     Random.seed!(rng, seed)
     c = copy(rng)
     @test c.state == rng.state

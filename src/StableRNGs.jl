@@ -26,9 +26,9 @@ const StableRNG = LehmerRNG
 
 function seed!(rng::LehmerRNG, seed::Integer)
     seed >= 0 || throw(ArgumentError("seed must be non-negative"))
-    seed <= typemax(Int64) ||
+    seed <= typemax(UInt64) ||
         # this constraint could be loosened a bit if requested
-        throw(ArgumentError("seed must be <= $(typemax(Int64))"))
+        throw(ArgumentError("seed must be <= $(typemax(UInt64))"))
 
     seed = ((seed % UInt128) << 1) | one(UInt128) # must be odd
     rng.state = seed
