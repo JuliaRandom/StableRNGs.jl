@@ -11,6 +11,18 @@ import Random: rand, seed!
 # MIT licensed code by Melissa E. O'Neill at
 # https://gist.github.com/imneme/aeae7628565f15fb3fef54be8533e39c
 
+"""
+    LehmerRNG
+    StableRNG
+
+Simple RNG with stable streams, usually suitable for testing.
+Use only the alias `StableRNG`, as the name `LehmerRNG` is not
+part of the API.
+
+Construction: `StableRNG(seed::Integer)`.
+
+Seeding: `Random.seed!(rng::StableRNG, seed::Integer)`.
+"""
 mutable struct LehmerRNG <: AbstractRNG
     state::UInt128
 
