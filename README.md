@@ -12,8 +12,6 @@ improvements).
 The `StableRNG` type provided by this package strives
 for stability, but if bugs which require breaking this promise are found,
 a new major version will be released with the fix.
-Note that this package did _not_ reach version 1.0, which means it is
-not stable _yet_, although no changes are expected.
 
 `StableRNG` is currently an alias for `LehmerRNG`, and implements a well understood
 linear congruential generator (LCG); an LCG is not state of the art,
@@ -29,7 +27,7 @@ Currently, this RNG requires explicit seeding (in the constructor
 or via `Random.seed!`), i.e. no random seed will be chosen for the user
 as is the case in e.g. `MersenneTwister()`.
 
-The currently stable (guaranteed) API is
+The stable (guaranteed) API is
 * construction: `rng = StableRNG(seed::Integer)` (in particular the alias
   `LehmerRNG` is currently _not_ part of the API)
 * seeding: `Random.seed!(rng::StableRNG, seed::Integer)`
