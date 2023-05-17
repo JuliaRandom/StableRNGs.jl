@@ -5,7 +5,7 @@ export StableRNG
 using Random: Random, AbstractRNG, Sampler, SamplerType
 
 import Random: rand, seed!
-
+import Future: randjump
 
 # implementation of LehmerRNG based on the constants found at the
 # MIT licensed code by Melissa E. O'Neill at
@@ -132,5 +132,15 @@ for T in Base.BitInteger_types
         SamplerRangeFast(r)
 end
 
+"""
+  randjump(r::LehmerRNG, steps::Integer=1<<20) -> LehmerRNG
+
+
+Create an initialized `LehmerRNG` object, whose state is moved forward (without generating numbers) from r by
+`steps` steps. One such step corresponds to the generation of one `Float64` number.
+"""
+function randjump(rng::LehmerRNG, steps::Base.BitInteger = 1<<20)
+    StableRNG(state = rng.state * (0x45a31efc5a35d971261fd0407a968add^steps))
+end
 
 end # module

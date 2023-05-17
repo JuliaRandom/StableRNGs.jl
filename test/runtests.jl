@@ -144,3 +144,14 @@ end
     shuffle!(StableRNG(10), b)
     @test b == a_shuffled
 end
+
+using Future: randjump
+@testset "`randjump`" begin
+    r = StableRNG(0)
+    r1 = randjump(r, 1)
+    r1234 = randjump(r, 1234)
+    rand(r)
+    @test r == r1
+    for _ = 1:1233; rand(r); end
+    @test r == r1234
+end
