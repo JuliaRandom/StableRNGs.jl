@@ -131,15 +131,11 @@ end
     end
 end
 
+# Reference test
 @testset "`shuffle` stability" begin
     a = 1:10
     a_shuffled = [4, 5, 6, 1, 3, 7, 10, 2, 8, 9]
-
-    # If these tests fail due to changes in the algorithm used in `Random.shuffle`,
-    # we should vendor the old implementation here to keep it stable.
-    # See <https://github.com/JuliaRandom/StableRNGs.jl/issues/10>.
-    @test shuffle(StableRNG(10), a) == a_shuffled 
-
+    @test shuffle(StableRNG(10), a) == a_shuffled
     b = collect(a)
     shuffle!(StableRNG(10), b)
     @test b == a_shuffled
