@@ -41,6 +41,7 @@ The stable (guaranteed) API is
   the mutating methods `rand!`, `randn!` and `randexp!`
 * `rand(rng, ::AbstractArray)` (e.g. `rand(rng, 1:9)`); the streams are the same
   on 32-bits and 64-bits architectures
+* `shuffle(rng, ::AbstractArray)` and `shuffle!(rng, ::AbstractArray)`
 
 Note that the generated streams of numbers for scalars and arrays are the same,
 i.e. `rand(rng, X, n)` is equal to `[rand(rng, X) for _=1:n]` for a given `rng`
