@@ -133,7 +133,7 @@ for T in Base.BitInteger_types
 end
 
 # https://github.com/JuliaRandom/StableRNGs.jl/issues/10
-Random.shuffle(r::StableRNG, a::AbstractArray) = shuffle!(r, Base.copymutable(a))
+Random.shuffle(r::StableRNG, a::AbstractArray) = Random.shuffle!(r, Base.copymutable(a))
 function Random.shuffle!(r::StableRNG, a::AbstractArray)
     Base.require_one_based_indexing(a)
     n = length(a)
