@@ -6,6 +6,13 @@ using Random: Random, AbstractRNG, Sampler, SamplerType
 
 import Random: rand, seed!
 
+# Compat
+if VERSION < v"1.2.0-"
+    using Base: has_offset_axes
+    require_one_based_indexing(A...) = !has_offset_axes(A...) || throw(ArgumentError("offset arrays are not supported but got an array with index other than 1"))
+else
+    using Base: require_one_based_indexing
+end
 
 # implementation of LehmerRNG based on the constants found at the
 # MIT licensed code by Melissa E. O'Neill at
@@ -135,7 +142,7 @@ end
 # https://github.com/JuliaRandom/StableRNGs.jl/issues/10
 Random.shuffle(r::StableRNG, a::AbstractArray) = Random.shuffle!(r, Base.copymutable(a))
 function Random.shuffle!(r::StableRNG, a::AbstractArray)
-    Base.require_one_based_indexing(a)
+    require_one_based_indexing(a)
     n = length(a)
     n <= 1 && return a # nextpow below won't work with n == 0
     @assert n <= Int64(2)^52

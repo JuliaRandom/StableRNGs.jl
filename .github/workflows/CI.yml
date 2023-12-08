@@ -20,6 +20,14 @@ jobs:
       matrix:
         version:
           - "1.0"  # earliest supported release
+          - "1.1"
+          - "1.2"
+          - "1.3"
+          - "1.4"
+          - "1.5"
+          - "1.6"
+          - "1.7"
+          - "1.8"
           - "1"    # latest release
           - "nightly"
         os:
