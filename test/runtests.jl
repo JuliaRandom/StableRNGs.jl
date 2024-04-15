@@ -140,3 +140,30 @@ end
     shuffle!(StableRNG(10), b)
     @test b == a_shuffled
 end
+
+# https://github.com/JuliaRandom/StableRNGs.jl/issues/20
+@testset "`randn` stability" begin
+    ref = [
+        0.5745734638645761,
+        0.9050768627399978,
+        0.7998353512850861,
+        3.8845391427592286,
+        -0.9209167676765456,
+        -0.8486914352114853,
+        -1.187370886634173
+    ]
+    @test randn(StableRNG(1_337), 10_000)[4214:4220] == ref
+end
+
+@testset "`randexp` stability" begin
+    ref = [
+        1.7805339657229489,
+        4.29332694381576,
+        0.20777989530218552,
+        8.196071589366719,
+        7.551925528256079,
+        1.3540162045313204,
+        0.5239664874260928
+    ]
+    @test randexp(StableRNG(1_337), 10_000)[1545:1551] == ref
+end
