@@ -155,4 +155,29 @@ function Random.shuffle!(r::StableRNG, a::AbstractArray)
     return a
 end
 
+# https://github.com/JuliaRandom/StableRNGs.jl/issues/20
+@noinline function Random.randn_unlikely(rng::StableRNG, idx, rabs, x)
+    @inbounds if idx == 0
+        while true
+            xx = -Random.ziggurat_nor_inv_r*log(rand(rng))
+            yy = -log(rand(rng))
+            yy+yy > xx*xx &&
+                return (rabs >> 8) % Bool ? -Random.ziggurat_nor_r-xx : Random.ziggurat_nor_r+xx
+        end
+    elseif (Random.fi[idx] - Random.fi[idx+1])*rand(rng) + Random.fi[idx+1] < exp(-0.5*x*x)
+        return x # return from the triangular area
+    else
+        return randn(rng)
+    end
+end
+@noinline function Random.randexp_unlikely(rng::StableRNG, idx, x)
+    @inbounds if idx == 0
+        return Random.ziggurat_exp_r - log(rand(rng))
+    elseif (Random.fe[idx] - Random.fe[idx+1])*rand(rng) + Random.fe[idx+1] < exp(-x)
+        return x # return from the triangular area
+    else
+        return Random.randexp(rng)
+    end
+end
+
 end # module
