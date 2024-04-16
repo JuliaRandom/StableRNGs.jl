@@ -139,6 +139,14 @@ end
     b = collect(a)
     shuffle!(StableRNG(10), b)
     @test b == a_shuffled
+
+    # https://github.com/JuliaRandom/StableRNGs.jl/issues/23
+    c = [false, true, false, true, false]
+    c_shuffled = [false, false, false, true, true]
+    @test shuffle!(StableRNG(123), c) == c_shuffled
+    d = [false true; true false]
+    d_shuffled = [true true; false false]
+    @test shuffle(StableRNG(31), d) == d_shuffled
 end
 
 # https://github.com/JuliaRandom/StableRNGs.jl/issues/20

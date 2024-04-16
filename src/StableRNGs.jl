@@ -141,7 +141,10 @@ end
 
 # https://github.com/JuliaRandom/StableRNGs.jl/issues/10
 Random.shuffle(r::StableRNG, a::AbstractArray) = Random.shuffle!(r, Base.copymutable(a))
-function Random.shuffle!(r::StableRNG, a::AbstractArray)
+# Fix method ambiguity issue: https://github.com/JuliaRandom/StableRNGs.jl/issues/23
+Random.shuffle!(r::StableRNG, a::AbstractArray) = _shuffle!(r, a)
+Random.shuffle!(r::StableRNG, a::AbstractArray{Bool}) = _shuffle!(r, a)
+function _shuffle!(r::StableRNG, a::AbstractArray)
     require_one_based_indexing(a)
     n = length(a)
     n <= 1 && return a # nextpow below won't work with n == 0
