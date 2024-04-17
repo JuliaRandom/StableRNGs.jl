@@ -3,6 +3,7 @@ module StableRNGs
 export StableRNG
 
 using Random: Random, AbstractRNG, Sampler, SamplerType
+using UUIDs
 
 import Random: rand, seed!
 
@@ -40,6 +41,7 @@ mutable struct LehmerRNG <: AbstractRNG
         new(state)
     end
 end
+LehmerRNG(uuid::UUID) = LehmerRNG(uuid.value & typemax(UInt))
 
 const StableRNG = LehmerRNG
 
