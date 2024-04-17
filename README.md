@@ -28,9 +28,9 @@ or via `Random.seed!`), i.e. no random seed will be chosen for the user
 as is the case in e.g. `MersenneTwister()`.
 
 The stable (guaranteed) API is
-* construction: `rng = StableRNG(seed::Integer)` (in particular the alias
+* construction: `rng = StableRNG(seed::Union{Integer, UUID})` (in particular the alias
   `LehmerRNG` is currently _not_ part of the API)
-* seeding: `Random.seed!(rng::StableRNG, seed::Integer)`
+* seeding: `Random.seed!(rng::StableRNG, seed::Union{Integer, UUID})`
   (with `0 <= seed <= typemax(UInt64)`)
 * `rand(rng, X)` where `X` is any of the standard bit `Integer` types
   (`Bool`, `Int8`, `Int16`, `Int32`, `Int64`, `Int128`,
