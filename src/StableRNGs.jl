@@ -3,6 +3,7 @@ module StableRNGs
 export StableRNG
 
 using Random: Random, AbstractRNG, Sampler, SamplerType
+using UUIDs
 
 import Random: rand, seed!
 
@@ -33,7 +34,7 @@ Seeding: `Random.seed!(rng::StableRNG, seed::Integer)`.
 mutable struct LehmerRNG <: AbstractRNG
     state::UInt128
 
-    LehmerRNG(seed::Integer) = seed!(new(), seed)
+    LehmerRNG(seed::Union{Integer, UUID}) = seed!(new(), seed)
 
     function LehmerRNG(; state::UInt128)
         isodd(state) || throw(ArgumentError("state must be odd"))
@@ -43,6 +44,7 @@ end
 
 const StableRNG = LehmerRNG
 
+seed!(rng::LehmerRNG, seed::UUID) = seed!(rng, seed.value & typemax(UInt64))
 function seed!(rng::LehmerRNG, seed::Integer)
     seed >= 0 || throw(ArgumentError("seed must be non-negative"))
     seed <= typemax(UInt64) ||

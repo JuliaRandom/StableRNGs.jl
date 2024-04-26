@@ -1,10 +1,11 @@
 name = "StableRNGs"
 uuid = "860ef19b-820b-49d6-a774-d7a799459cd3"
 authors = ["Rafael Fourquet <fourquet.rafael@gmail.com>"]
-version = "1.0.2"
+version = "1.1.0"
 
 [deps]
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [compat]
 Random = "<0.0.1, 1"

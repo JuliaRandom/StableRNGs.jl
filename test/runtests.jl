@@ -2,12 +2,14 @@ using StableRNGs
 using StableRNGs: LehmerRNG
 using Test
 using Random
+using UUIDs
 
 include("streams.jl")
 
 @testset "initialization" begin
     @test StableRNG === LehmerRNG
     @test_throws UndefKeywordError LehmerRNG()
+    @test rand(LehmerRNG(UUID("85eb0d5c-4329-4d0d-95d8-cf82eebcb0e1")), 1:2) == 2
     rng = LehmerRNG(0)
     @test_throws MethodError Random.seed!(rng)
     @test_throws ArgumentError LehmerRNG(rand(typemin(Int):-1))
