@@ -1,6 +1,7 @@
 # StableRNGs
 
-[![Build Status](https://travis-ci.org/JuliaRandom/StableRNGs.jl.svg?branch=master)](https://travis-ci.org/JuliaRandom/StableRNGs.jl)
+[![CI](https://github.com/JuliaRandom/StableRNGs.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuliaRandom/StableRNGs.jl/actions/workflows/CI.yml)
+[![PkgEval](https://juliaci.github.io/NanosoldierReports/pkgeval_badges/S/StableRNGs.svg)](https://juliaci.github.io/NanosoldierReports/pkgeval_badges/report.html)
 
 This package intends to provide a simple RNG with _stable_ streams, suitable
 for tests in packages which need reproducible streams of random numbers
