@@ -2,9 +2,8 @@ module StableRNGs
 
 export StableRNG
 
-using Random: Random, AbstractRNG, Sampler, SamplerType
-
-import Random: rand, seed!
+import Random: Random, AbstractRNG, Sampler, SamplerType,
+               rand, seed!
 
 # Compat
 if VERSION < v"1.2.0-"
