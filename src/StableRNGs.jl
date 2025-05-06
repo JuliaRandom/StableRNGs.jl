@@ -135,7 +135,7 @@ end
 
 for T in Base.BitInteger_types
     # eval because of ambiguities with `where T <: BitInteger`
-    @eval Sampler(::Type{LehmerRNG}, r::AbstractUnitRange{$T}, ::Random.Repetition) =
+    @eval Random.Sampler(::Type{LehmerRNG}, r::AbstractUnitRange{$T}, ::Random.Repetition) =
         SamplerRangeFast(r)
 end
 
