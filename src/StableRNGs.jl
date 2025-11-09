@@ -151,11 +151,16 @@ function _shuffle!(r::StableRNG, a::AbstractArray)
     mask = nextpow(2, n) - 1
     for i = n:-1:2
         (mask >> 1) == i && (mask >>= 1)
-        j = 1 + rand(r, Random.ltm52(i, mask))
+        j = 1 + rand(r, ltm52(i, mask))
         a[i], a[j] = a[j], a[i]
     end
     return a
 end
+
+# copied from Random, from which this was deleted in https://github.com/JuliaLang/julia/pull/50509
+"Return a sampler generating a random `Int` (masked with `mask`) in ``[0, n)``, when `n <= 2^52`."
+ltm52(n::Int, mask::Int=nextpow(2, n)-1) = LessThan(n-1, Masked(mask, Random.UInt52Raw(Int)))
+
 
 # https://github.com/JuliaRandom/StableRNGs.jl/issues/20
 @noinline function Random.randn_unlikely(rng::StableRNG, idx, rabs, x)
