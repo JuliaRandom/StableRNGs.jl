@@ -31,6 +31,9 @@ jobs:
           - "1.6"
           - "1.7"
           - "1.8"
+          - "1.9"
+          - "1.10"
+          - "1.11"
           - "1"    # latest release
           - "nightly"
         os:
@@ -43,6 +46,8 @@ jobs:
         exclude:
           - os: macOS-latest
             arch: x86
+          - os: macOS-latest
+            version: "1.4" # consistently fails with: "Library not loaded: @rpath/libc++.1.dylib"
     steps:
       - uses: actions/checkout@v5
       - uses: julia-actions/setup-julia@v2
