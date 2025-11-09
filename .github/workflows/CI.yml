@@ -41,7 +41,6 @@ jobs:
           - x64
           - x86
         exclude:
-          # Test 64-bit only on macOS
           - os: macOS-latest
             arch: x86
     steps:
