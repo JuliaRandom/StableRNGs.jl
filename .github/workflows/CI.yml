@@ -49,7 +49,7 @@ jobs:
           - os: macOS-latest
             version: "1.4" # consistently fails with: "Library not loaded: @rpath/libc++.1.dylib"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.version }}
