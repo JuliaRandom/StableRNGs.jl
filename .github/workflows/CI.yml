@@ -1,8 +1,5 @@
 name: CI
 on:
-  schedule:
-    # Run CI every Sunday
-    - cron: '0 0 * * 0'
   push:
     branches:
       - master
