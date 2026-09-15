@@ -149,6 +149,15 @@ end
     @test shuffle(StableRNG(31), d) == d_shuffled
 end
 
+@testset "`randperm` stability" begin
+    expected = [9, 7, 10, 3, 4, 5, 6, 1, 2, 8]
+
+    @test randperm(StableRNG(10), 10) == expected
+
+    a = Vector{Int}(undef, 10)
+    @test randperm!(StableRNG(10), a) == expected
+end
+
 # https://github.com/JuliaRandom/StableRNGs.jl/issues/20
 @testset "`randn` stability" begin
     ref = [
