@@ -157,6 +157,32 @@ function _shuffle!(r::StableRNG, a::AbstractArray)
     return a
 end
 
+function Random.randperm(r::StableRNG, n::T) where {T <: Integer}
+    Random.randperm!(r, Vector{T}(undef, n))
+end
+
+function Random.randperm!(r::StableRNG, a::Array{<:Integer})
+    n = length(a)
+    @assert n <= Int64(2)^52
+    n == 0 && return a
+
+    a[1] = 1
+    mask = 3
+
+    @inbounds for i = 2:n
+        j = 1 + rand(r, ltm52(i, mask))
+
+        if i != j
+            a[i] = a[j]
+        end
+
+        a[j] = i
+        i == 1 + mask && (mask = 2 * mask + 1)
+    end
+
+    return a
+end
+
 # copied from Random, from which this was deleted in https://github.com/JuliaLang/julia/pull/50509
 "Return a sampler generating a random `Int` (masked with `mask`) in ``[0, n)``, when `n <= 2^52`."
 ltm52(n::Int, mask::Int=nextpow(2, n)-1) = LessThan(n-1, Masked(mask, Random.UInt52Raw(Int)))
